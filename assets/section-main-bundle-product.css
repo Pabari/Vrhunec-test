@@ -1,0 +1,311 @@
+#bundle-product-kit {
+  max-width: 1024px;
+  margin: 0 auto;
+  background: var(--color-white);
+  padding: 45px 53px;
+}
+
+.kit-products-tab a {
+  margin: 0 5px;
+  text-decoration: none;
+  color: var(--color-light-black);
+  font-size: 14px;
+  line-height: 2;
+  letter-spacing: .2px;
+  font-weight: 700;
+  border-radius: 37px;
+  padding: 9px 36px;
+  border: 1px solid var(--color-light-black);
+  display: var(--display-inline-flex);
+  align-items: var(--text-center);
+  justify-content: var(--text-center);
+}
+
+.kit-products-tab a.active {
+  background: var(--color-pink);
+  border-color: var(--color-pink);
+  color: var(--color-white);
+  transition: .3s linear;
+}
+
+.bundle-selected-top {
+  display: var(--display-flex);
+  justify-content: var(--justify-between);
+  margin-top: 60px;
+  margin-bottom: 30px;
+}
+
+.selected-stencil-wrapper {
+  width: 25%;
+  height: 300px;
+  padding: 10px;
+}
+
+.selected-stencil-wrapper div {
+  background: var(--color-light-black);
+  position: relative;
+  height: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.selected-stencil-wrapper div.empty:before {
+  content: "Selection is not completed yet";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  color: var(--color-white);
+  font-size: 14px;
+  line-height: 17px;
+  text-align: var(--text-center);
+}
+
+.selected-stencil-wrapper div button {
+  display: var(--display-none);
+}
+
+.selected-stencils-slider .flickity-button {
+  background: var(--color-white);
+  box-shadow: 0 3px 16px #0000001a;
+}
+
+.selected-stencils-slider .flickity-prev-next-button.previous {
+  left: -10px;
+}
+
+.selected-stencils-slider .flickity-prev-next-button.next {
+  right: -10px;
+}
+
+.selected-stencils-slider div.active button {
+  display: var(--display-block);
+  position: absolute;
+  font-size: 30px;
+  border: none;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  background: #0006;
+  width: 100%;
+  height: 100%;
+  color: var(--color-white);
+  z-index: 1;
+  opacity: 0;
+}
+
+.selected-stencils-slider div.active:hover button {
+  opacity: 1;
+  transition: .4s linear;
+  cursor: pointer;
+}
+
+.image-flip {
+  display: var(--display-block);
+}
+
+.image-flip img {
+  aspect-ratio: 1/1;
+  object-fit: cover;
+}
+
+.image-flip .primary-img {
+  display: var(--display-block);
+  margin: 0;
+  width: 100%;
+}
+
+.image-flip .secondary-img {
+  display: var(--display-none);
+  height: 100%;
+  width: 100%;
+}
+
+.selected-stencils-slider div.active .stencil-kit-images {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.selected-stencils-slider .stencil-kit-images .primary-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.selected-stencils-slider .active:hover .primary-img,
+.bunle-products-listing .stencil-kit-images:hover .primary-img {
+  display: var(--display-none);
+}
+
+.selected-stencils-slider .active:hover .secondary-img,
+.bunle-products-listing .stencil-kit-images:hover .secondary-img {
+  display: var(--display-block);
+}
+
+.bundle-products-wrapper {
+  margin-top: 40px;
+  width: 100%;
+}
+
+.bundle-products-desktop-filter {
+  display: var(--display-flex);
+  align-items: var(--text-center);
+  justify-content: var(--text-center);
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+.bundle-products-desktop-filter a {
+  text-decoration: none;
+  color: var(--color-light-black);
+  font-size: 18px;
+  line-height: 25px;
+  font-weight: 500;
+  margin: 0 20px;
+  border-bottom: 2px solid transparent;
+}
+
+.bundle-products-desktop-filter a:first-child {
+    margin-left: 0;
+}
+
+.bundle-products-desktop-filter a.active {
+    color: var(--color-pink);
+    border-color: var(--color-pink);
+}
+
+.bundle-products-mobile-filter {
+  display: var(--display-none)
+}
+
+.bunle-products-listing {
+  max-height: 880px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  display: var(--display-flex);
+  flex-wrap: wrap;
+  justify-content: var(--text-center);
+  box-shadow: none;
+  border: 2px solid var(--color-pink);
+  padding: 40px 0;
+  border-radius: 8px;
+  list-style: none;
+}
+
+.bunle-products-listing li {
+  width: 22%;
+  margin: 0 1% 20px;
+  padding: 5px;
+  text-align: var(--text-center);
+  cursor: pointer;
+}
+
+.bunle-products-listing .stencil-kit-images {
+  border: 2px solid #F3F3F3;
+  border-radius: 8px;
+  margin-bottom: 11px;
+}
+
+.bunle-products-listing .stencil-kit-images img {
+  border-radius: 8px;
+  height: auto;
+}
+
+.bunle-products-listing .selected_stencil .stencil-kit-images {
+  border-color: var(--color-pink);
+}
+
+.bunle-products-listing li span.stencil-name {
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.bundle-product-btn-wrap {
+  display: var(--display-flex);
+  align-items: var(--text-center);
+  justify-content: var(--justify-between);
+  padding: 20px 0;
+}
+
+@media only screen and (max-width: 1023px) {
+  .bundle-products-desktop-filter {
+    display: var(--display-none);
+  }
+  .bundle-products-mobile-filter {
+    display: var(--display-block);
+    text-align: var(--text-center);
+  }
+  .selected-stencil-wrapper {
+    width: 33.33%;
+  }
+  .bunle-products-listing li {
+      width: 30%;
+  }
+}
+
+@media only screen and (max-width: 749px) {
+  #bundle-product-kit {
+    padding: 30px 25px;
+  }
+  .kit-products-tab a {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  .selected-stencil-wrapper {
+    width: 50%;
+  }
+  .selected-stencils-slider .flickity-button:focus, .selected-stencils-slider .flickity-button {
+    box-shadow: none;
+  }
+  #stencil-kit-filters {
+    height: 40px;
+    padding: 10px;
+  }
+  .bunle-products-listing li {
+      width: 45%;
+  }
+  .bundle-product-btn-wrap {
+    flex-wrap: wrap;
+  }
+}
+
+@media only screen and (max-width: 580px) {
+  #bundle-product-kit {
+    padding: 20px 15px;
+  }
+  .bundle-selected-top {
+    flex-direction: column-reverse;
+    padding: 25px 0 20px;
+    align-items: center;
+    margin-top: 0px;
+  }
+  .selected-stencil-wrapper {
+    width: 100%;
+  }
+  .selected-stencil-wrapper div {
+    max-width: 220px;
+    margin: 0 auto;
+  }
+  .selected-stencils-slider .flickity-prev-next-button.previous {
+    left: calc(45% - 32px);
+    top: 110%;
+  }
+  .selected-stencils-slider .flickity-prev-next-button.next {
+    right: calc(45% - 32px);
+    top: 110%;
+  }
+  .selected-stencils-slider .flickity-button:focus, .selected-stencils-slider .flickity-button {
+    width: 32px;
+    height: 32px;
+  }
+  .bundle-products-wrapper {
+    margin-top: 110px;
+  }
+  .bunle-products-listing li {
+      width: 48%;
+  }
+}
