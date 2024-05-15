@@ -1,0 +1,335 @@
+{{ 'section-main-product.css' | asset_url | stylesheet_tag }}
+{{ 'component-slider.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-deferred-media.css' | asset_url | stylesheet_tag }}
+<link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+{{ 'section-main-bundle-product.css' | asset_url | stylesheet_tag }}
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+{%- if request.design_mode -%}
+  <script src="{{ 'theme-editor.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
+<script src="{{ 'product-info.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+<script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js" defer="defer"></script>
+<script src="{{ 'section-main-bundle-product.js' | asset_url }}" defer="defer"></script>
+
+{%- assign bundel_small_product = product.metafields.custom.bundel_small_product -%}
+{%- assign bundel_large_product = product.metafields.custom.bundel_large_product -%}
+{%- assign selection_limit = product.metafields.custom.selection_limit -%}
+{%- assign filters_list = product.metafields.custom.filters_list -%}
+{%- assign active_small_product = false -%}
+{%- assign active_large_product = false -%}
+{%- assign product_form_id = 'product-form-' | append: section.id -%}
+{%- liquid
+  assign gift_card_recipient_feature_active = false
+  if block.settings.show_gift_card_recipient and product.gift_card?
+    assign gift_card_recipient_feature_active = true
+  endif
+-%}
+
+{%- if product.url == bundel_small_product.value.url -%}
+  {%- assign active_small_product = true -%}
+{%- endif -%}
+
+{%- if product.url == bundel_large_product.value.url -%}
+  {%- assign active_large_product = true -%}
+{%- endif -%}
+
+<div class="page-width">
+  <div id="bundle-product-kit" class="product grid grid--1-col grid--2-col-tablet" >
+    <div class="grid__item">
+      <div class="bundle-product-wrapper-top">
+        <div class="title-wrapper center">
+          <h1 class="title font-body-bold">{{ product.title }}</h1>
+        </div>
+        {%- if bundel_small_product != blank or bundel_large_product != blank -%}
+        <div class="kit-products-tab center">
+          {%- if bundel_small_product != blank -%}
+            <a href="{{  bundel_small_product.value.url }}" class="{% if active_small_product %} active {% endif %}">Small Kit</a>
+          {%- endif -%}
+          {%- if bundel_large_product != blank -%}
+            <a href="{{  bundel_large_product.value.url }}" class="{% if active_large_product %} active {% endif %}">Large Kit</a>
+          {%- endif -%}
+        </div>
+        {%- endif -%}
+      </div>
+      <div class="bundle-selected-wrapper">
+        <div class="bundle-selected-top">
+          <div class="selected-stencils-heading font-body-bold">
+            Selected Stencils: <span id="selected_product_count">0</span> out of {{ selection_limit }} 
+          </div>
+          <div class="product--price font-body-bold">
+            {%- render 'price',
+              product: product,
+              use_variant: true,
+              show_badges: true
+            -%}
+          </div>
+        </div>
+        <div class="bundle-selected-bottom">
+          <div class="selected-stencils-slider"  data-max="{{ selection_limit }}">
+            {%- for i in (1..100) limit : selection_limit -%}
+            <div class="selected-stencil-wrapper">
+              <div id="stencil_{{ i }}" class="empty">
+                <button data-stencil-id="stencil_{{ i }}">X</button>
+              </div>
+            </div>
+            {%- endfor -%}
+          </div>
+        </div>
+      </div>
+      <div class="bundle-products-wrapper">
+        {%- if filters_list != blank -%}
+          {%- assign filters_lists = filters_list.value -%}
+          <div class="bundle-products-filter">
+            <div class="bundle-products-mobile-filter">
+              <label for="stencil-kit-filters">Filter by Style:</label>
+              <select id="stencil-kit-filters">
+                <option selected="" value="design-style-all">All</option>
+                {%- for filter_item in filters_lists -%}
+                <option value="design-style-{{ filter_item | handleize }}">{{ filter_item }}</option>
+                {%- endfor -%}
+              </select>
+            </div>
+            <div class="bundle-products-desktop-filter center">
+              <a href="#" data-selected="design-style-all" class="active">All</a>
+              {%- for filter_item in filters_lists -%}
+                <a href="#" data-selected="design-style-{{ filter_item | handleize }}">{{ filter_item }}</a>
+              {%- endfor -%}
+            </div>
+          </div>
+
+          {%- assign filter_collection_product_ids = "" -%}
+          <ul class="bunle-products-listing">
+            {%- for filter_item in filters_lists -%}
+              {% assign filter_collection_handle = filter_item | handleize %}
+              {% if collections[filter_collection_handle].products.count > 0 %}
+                {% for filter_collection_product in collections[filter_collection_handle].products %}
+                    {% unless filter_collection_product_ids contains filter_collection_product.id %}
+                      {% assign filter_collection_product_ids = filter_collection_product_ids | append: filter_collection_product.id | append: "," %}
+                      <li data-product-name="{{ filter_collection_product.title }}" class="design-style-all design-style-{{ filter_collection_handle }}">
+                        <span data-product="{{ filter_collection_product.title }}" class="stencil-kit-images image-flip ">
+                          {%- if filter_collection_product.featured_media -%}
+                          <img src="{{ filter_collection_product.featured_media | img_url : 'master' }}" loading="lazy" alt="{{ filter_collection_product.featured_media.alt | escape }}" class="primary-img" width="200" height="200">
+                          {%- endif -%}
+                          {%- if filter_collection_product.media[1] != null -%}
+                            <img src="{{ filter_collection_product.media[1] | img_url : 'master' }}" loading="lazy" alt="{{ filter_collection_product.media[1].alt | escape }}" class="secondary-img" width="200" height="200">
+                          {%- else -%}
+                            <img src="{{ filter_collection_product.featured_media | img_url : 'master' }}" loading="lazy" alt="{{ filter_collection_product.featured_media.alt | escape }}" class="secondary-img" width="200" height="200">
+                          {%- endif -%}
+                        </span>
+                        <span class="stencil-name">{{ filter_collection_product.title }}</span>
+                      </li>
+                  {% endunless %}
+                {% endfor %}
+              {% endif %}
+            {% endfor %}
+            
+          </ul>
+          
+          <product-form
+            class="product-form"
+            data-hide-errors="{{ gift_card_recipient_feature_active }}"
+            data-section-id="{{ section.id }}"
+          >
+            <div class="product-form__error-message-wrapper" role="alert" hidden>
+              <svg
+                aria-hidden="true"
+                focusable="false"
+                class="icon icon-error"
+                viewBox="0 0 13 13"
+              >
+                <circle cx="6.5" cy="6.50049" r="5.5" stroke="white" stroke-width="2"/>
+                <circle cx="6.5" cy="6.5" r="5.5" fill="#EB001B" stroke="#EB001B" stroke-width="0.7"/>
+                <path d="M5.87413 3.52832L5.97439 7.57216H7.02713L7.12739 3.52832H5.87413ZM6.50076 9.66091C6.88091 9.66091 7.18169 9.37267 7.18169 9.00504C7.18169 8.63742 6.88091 8.34917 6.50076 8.34917C6.12061 8.34917 5.81982 8.63742 5.81982 9.00504C5.81982 9.37267 6.12061 9.66091 6.50076 9.66091Z" fill="white"/>
+                <path d="M5.87413 3.17832H5.51535L5.52424 3.537L5.6245 7.58083L5.63296 7.92216H5.97439H7.02713H7.36856L7.37702 7.58083L7.47728 3.537L7.48617 3.17832H7.12739H5.87413ZM6.50076 10.0109C7.06121 10.0109 7.5317 9.57872 7.5317 9.00504C7.5317 8.43137 7.06121 7.99918 6.50076 7.99918C5.94031 7.99918 5.46982 8.43137 5.46982 9.00504C5.46982 9.57872 5.94031 10.0109 6.50076 10.0109Z" fill="white" stroke="#EB001B" stroke-width="0.7">
+              </svg>
+              <span class="product-form__error-message"></span>
+            </div>
+            {%- form 'product',
+              product,
+              id: product_form_id,
+              class: 'form',
+              novalidate: 'novalidate',
+              data-type: 'add-to-cart-form'
+            -%}
+              <input
+                type="hidden"
+                name="id"
+                value="{{ product.selected_or_first_available_variant.id }}"
+                {% if product.selected_or_first_available_variant.available == false or quantity_rule_soldout %}
+                  disabled
+                {% endif %}
+                class="product-variant-id"
+              >
+
+              <div id="selected-stencils-kit">
+                {%- for i in (1..100) limit : selection_limit -%}
+                <input type="hidden" name="properties[Stencil_{{ i }}]" id="final_stencil_{{ i }}" class="empty">   
+                {%- endfor -%}
+                           
+              </div>
+      
+              {%- if gift_card_recipient_feature_active -%}
+                {%- render 'gift-card-recipient-form', product: product, form: form, section: section -%}
+              {%- endif -%}
+
+              <div class="product-form-bottom">
+                <div class="bundle-product-btn-wrap">
+                  <div class="product__price">
+                      {%- render 'price',
+                        product: product,
+                        use_variant: true,
+                        show_badges: true
+                      -%}
+                  </div>
+                  <button 
+                    id="ProductSubmitButton-{{ section.id }}"
+                    type="submit"
+                    name="add" 
+                    disabled="" 
+                    class="product-form__submit button button--full-width button--primary" data-add-to-cart>
+                      <span data-add-to-cart-text>{{ selection_limit }} Selections Remaining</span>
+                      {%- render 'loading-spinner' -%}
+                  </button>
+                </div>
+              </div>
+            {%- endform -%}
+          </product-form>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      function isIE() {
+        const ua = window.navigator.userAgent;
+        const msie = ua.indexOf('MSIE ');
+        const trident = ua.indexOf('Trident/');
+  
+        return msie > 0 || trident > 0;
+      }
+  
+      if (!isIE()) return;
+      const hiddenInput = document.querySelector('#{{ product_form_id }} input[name="id"]');
+      const noScriptInputWrapper = document.createElement('div');
+      const variantSwitcher =
+        document.querySelector('variant-radios[data-section="{{ section.id }}"]') ||
+        document.querySelector('variant-selects[data-section="{{ section.id }}"]');
+      noScriptInputWrapper.innerHTML = document.querySelector(
+        '.product-form__noscript-wrapper-{{ section.id }}'
+      ).textContent;
+      variantSwitcher.outerHTML = noScriptInputWrapper.outerHTML;
+  
+      document.querySelector('#Variants-{{ section.id }}').addEventListener('change', function (event) {
+        hiddenInput.value = event.currentTarget.value;
+      });
+    });
+  </script>
+  
+  {%- liquid
+    if product.selected_or_first_available_variant.featured_media
+      assign seo_media = product.selected_or_first_available_variant.featured_media
+    else
+      assign seo_media = product.featured_media
+    endif
+  -%}
+  
+  <script type="application/ld+json">
+    {
+      "@context": "http://schema.org/",
+      "@type": "Product",
+      "name": {{ product.title | json }},
+      "url": {{ request.origin | append: product.url | json }},
+      {% if seo_media -%}
+        "image": [
+          {{ seo_media | image_url: width: 1920 | prepend: "https:" | json }}
+        ],
+      {%- endif %}
+      "description": {{ product.description | strip_html | json }},
+      {% if product.selected_or_first_available_variant.sku != blank -%}
+        "sku": {{ product.selected_or_first_available_variant.sku | json }},
+      {%- endif %}
+      "brand": {
+        "@type": "Brand",
+        "name": {{ product.vendor | json }}
+      },
+      "offers": [
+        {%- for variant in product.variants -%}
+          {
+            "@type" : "Offer",
+            {%- if variant.sku != blank -%}
+              "sku": {{ variant.sku | json }},
+            {%- endif -%}
+            {%- if variant.barcode.size == 12 -%}
+              "gtin12": {{ variant.barcode }},
+            {%- endif -%}
+            {%- if variant.barcode.size == 13 -%}
+              "gtin13": {{ variant.barcode }},
+            {%- endif -%}
+            {%- if variant.barcode.size == 14 -%}
+              "gtin14": {{ variant.barcode }},
+            {%- endif -%}
+            "availability" : "http://schema.org/{% if variant.available %}InStock{% else %}OutOfStock{% endif %}",
+            "price" : {{ variant.price | divided_by: 100.00 | json }},
+            "priceCurrency" : {{ cart.currency.iso_code | json }},
+            "url" : {{ request.origin | append: variant.url | json }}
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+
+{% schema %}
+{
+  "name": "Main Bundle Product",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "background-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ]
+}
+{% endschema %}

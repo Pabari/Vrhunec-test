@@ -216,6 +216,17 @@
         --variant-pills-shadow-horizontal-offset: {{ settings.variant_pills_shadow_horizontal_offset }}px;
         --variant-pills-shadow-vertical-offset: {{ settings.variant_pills_shadow_vertical_offset }}px;
         --variant-pills-shadow-blur-radius: {{ settings.variant_pills_shadow_blur }}px;
+
+        --color-pink: #F76797;
+        --color-white: #ffffff;
+        --color-light-black: #121212;
+        --display-flex: flex;
+        --display-inline-flex: inline-flex;
+        --display-block: block;
+        --display-none: none;
+        --display-grid: grid;
+        --justify-between: space-between; 
+        --text-center: center;
       }
 
       *,
@@ -280,6 +291,7 @@
         document.documentElement.classList.add('shopify-design-mode');
       }
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" crossorigin="anonymous" referrerpolicy="no-referrer" defer="defer"></script>
   </head>
 
   <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}">
