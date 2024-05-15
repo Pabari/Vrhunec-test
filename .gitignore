@@ -1,0 +1,6 @@
+vcs.xml
+config.yml
+config/settings_data.json
+config/.DS_Store
+.DS_Store
+.vscode/*
